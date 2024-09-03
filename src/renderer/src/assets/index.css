@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    #app {
+        @apply h-full;
+    }
+
+    html, body {
+        @apply h-full;
+
+        @apply select-none;
+
+        @apply bg-transparent;
+
+        @apply font-mono antialiased  text-white;
+
+        @apply overflow-hidden;
+
+        @apply bg-white text-black;
+    }
+      
+    .dark body {
+        @apply bg-gray-900 text-white; /* Night mode */ 
+    }
+    
+    header {
+        background: #F3F3F3;
+    }
+    
+    .dark header {
+        background: #202020;
+    }
+
+    .drag-region {
+        -webkit-app-region: drag;
+    }
+
+    .drag-region .drag-button {
+        -webkit-app-region: no-drag;
+    }
+
+    
+}
