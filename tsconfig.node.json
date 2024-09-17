@@ -1,10 +1,15 @@
 {
   "extends": "@electron-toolkit/tsconfig/tsconfig.node.json",
   "include": [
+    "src/renderer/src/env.d.ts",
     "electron.vite.config.*",
     "src/main/**/*",
     "src/preload/**/*",
-    "src/utils/**/*"
+    "src/models/**/*",
+    "src/schemas/**/*",
+    "src/utils/**/*",
+    "src/fyo/**/*",
+    "fixtures/**/*",
   ],
   "compilerOptions": {
     "composite": true,
@@ -13,12 +18,27 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@/*": [
+      "@main/*": [
         "src/main/*"
       ],
+      "@models/*": [
+        "src/models/*"
+      ],
+      "@preload/*": [
+        "src/preload/*"
+      ],
+      "@schemas/*": [
+        "src/schemas/*"
+      ],
       "@utils/*": [
-        "src/utils/src/*"
-      ]
+        "src/utils/*"
+      ],
+      "@fyo/*": [
+        "src/fyo/*"
+      ],
+      "@fixtures/*": [
+        "fixtures/*"
+      ],
     }
   }
 }

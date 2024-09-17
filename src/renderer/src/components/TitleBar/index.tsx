@@ -1,22 +1,19 @@
+import icon from '@/assets/icon.png';
 import { ComponentProps } from "react";
-import { CloseIcon, MaximizeIcon, MinimizeIcon } from "./TitleBarIcon";
-import './main.css';
+import { twMerge } from 'tailwind-merge';
 
-export const TitleBar = ({ ...props }: ComponentProps<'header'>) => {
+export const TitleBar = ({ className, ...props }: ComponentProps<'div'>) => {
 
     return (
-        <header { ...props }>
-            <div className="w-full h-full grid drag-region grid-flow-col-dense">
-                <div className="text-center">
-                    <span>Electron quick start</span>
+        <div className={twMerge("bg-[#252526] text-[#d4d4d4]", className)} { ...props }>
+            <div className="w-full h-full grid place-items-center drag-region grid-flow-col-dense">
+                <div className="absolute drag-button top-[4px] left-2">
+                    <img className="w-6 h-6" src={icon} alt="Logo" />
                 </div>
-                {window.context.isNotMac && 
-                <div className="absolute grid-cols-3 drag-button top-0 right-0">
-                    <MinimizeIcon className="w-9 h-8 hover:bg-gray-200 hover:dark:bg-gray-600"/>
-                    <MaximizeIcon className="w-9 h-8 hover:bg-gray-200 hover:dark:bg-gray-600"/>
-                    <CloseIcon className="w-9 h-8 hover:bg-red-700"/>
-                </div>}
+                <div className="text-base text-center text-dark-base">
+                    <span className="my-auto">{import.meta.env.VITE_APPNAME}</span>
+                </div>
             </div>
-        </header>
+        </div>
     );
 };

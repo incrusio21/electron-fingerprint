@@ -1,140 +1,132 @@
-import { electronApp, is, optimizer } from '@electron-toolkit/utils'
-import { app, BrowserWindow, ipcMain, shell } from 'electron'
-import { join } from 'path'
-import icon from '../../resources/icon.png?asset'
+import { is } from '@electron-toolkit/utils'
+import registerAppLifecycleListeners from '@preload/registerAppLifecycleListeners'
+import registerIpcMainActionListeners from '@preload/registerIpcMainActionListeners'
+import registerWindowListeners from '@preload/registerWindowListeners'
+import { app, BrowserWindow, BrowserWindowConstructorOptions, shell } from 'electron'
+import path from 'path'
 
-function createWindow(): void {
-    // Create the browser window.
-    const mainWindow = new BrowserWindow({
-        width: 900,
-        height: 670,
-        show: false,
-        frame: false,  // Disable native frame
-        titleBarStyle: 'hidden', // Hide title bar
-        ...(process.platform === 'linux' ? { icon } : {}),
-        center: true,
-        roundedCorners: false,
-        title: "Erpnext Fingerprint Log",
-        webPreferences: {
-            preload: join(__dirname, '../preload/index.js'),
-            sandbox: true,
-            contextIsolation: true
+export class Main {
+    title = import.meta.env.VITE_APPNAME;
+    icon: string;
+
+    mainWindow: BrowserWindow | null = null;
+
+    WIDTH = 1200;
+    HEIGHT = process.platform === 'win32' ? 826 : 1000;
+    
+    constructor() {
+        this.icon = this.isDevelopment
+        ? path.resolve('./build/icon.png')
+        : path.join(__dirname, 'icons', '512x512.png');
+
+
+        this.registerListeners();
+        if (this.isMac && this.isDevelopment) {
+            app.dock.setIcon(this.icon);
         }
-    })
+    }
+
+    get isDevelopment() {
+        return process.env.NODE_ENV === 'development';
+    }
+
+    get isMac() {
+        return process.platform === 'darwin';
+    }
+
+    get isLinux() {
+        return process.platform === 'linux';
+    }
+
+    registerListeners() {
+        // registerIpcMainMessageListeners(this);
+        registerIpcMainActionListeners(this);
+        // registerAutoUpdaterListeners(this);
+        registerAppLifecycleListeners(this);
+        // registerProcessListeners(this);
+    }
+
+    getOptions(): BrowserWindowConstructorOptions {
+        const preload = path.join(__dirname, '../preload', 'index.js');
+        const options: BrowserWindowConstructorOptions = {
+            width: this.WIDTH,
+            height: this.HEIGHT,
+            title: this.title,
+            titleBarStyle: 'hidden',
+            trafficLightPosition: { x: 16, y: 16 },
+            webPreferences: {
+                contextIsolation: true,
+                nodeIntegration: false,
+                sandbox: false,
+                preload,
+            },
+            autoHideMenuBar: true,
+            frame: !this.isMac,
+            resizable: true,
+        };
+      
+        if (!this.isMac) {
+            options.titleBarOverlay = {
+                color: '#252526',
+                symbolColor: "#d4d4d4",
+                height: 30,
+            };
+        }
     
-    mainWindow.on('ready-to-show', () => {
-        mainWindow.show()
-    })
-
-    mainWindow.webContents.setWindowOpenHandler((details) => {
-        shell.openExternal(details.url)
-        return { action: 'deny' }
-    })
+        if (this.isDevelopment || this.isLinux) {
+            Object.assign(options, { icon: this.icon });
+        }
     
-    // Send maximized or unmaximized status to renderer process
-    mainWindow.on('maximize', () => {
-        mainWindow.webContents.send('window-maximized', true);
-    });
+        if (this.isLinux) {
+            Object.assign(options, {
+                icon: path.join(__dirname, '/icons/512x512.png'),
+            });
+        }
+        
+        return options;
+    }
+    
+    async createWindow() {
+        const me = this
+        const options = this.getOptions();
+        this.mainWindow = new BrowserWindow(options);
 
-    mainWindow.on('unmaximize', () => {
-        mainWindow.webContents.send('window-maximized', false);
-    });
+        this.mainWindow.on('ready-to-show', () => {
+            me.mainWindow?.show()
+        })
 
-    ipcMain.on('maximize-window', () => {
-        if (mainWindow.isMaximized()) {
-            mainWindow.unmaximize();
+        this.mainWindow.webContents.setWindowOpenHandler((details) => {
+            shell.openExternal(details.url)
+            return { action: 'deny' }
+        })
+
+        this.mainWindow.webContents.setWindowOpenHandler((details) => {
+            shell.openExternal(details.url)
+            return { action: 'deny' }
+        })
+
+        // HMR for renderer base on electron-vite cli.
+        // Load the remote URL for development or the local html file for production.
+        if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+            this.mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
         } else {
-            mainWindow.maximize();
+            this.mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'))
         }
-    });
 
-    ipcMain.on('minimize-window', () => {
-        mainWindow.minimize();
-    });
+        this.setMainWindowListeners(this.mainWindow)
+    }
 
-    ipcMain.on('close-window', () => {
-        mainWindow.close();
-    });
+    setMainWindowListeners(window : BrowserWindow) {
+        if (window === null) return;
+    
+        window.on('closed', () => {
+            this.mainWindow = null;
+        });
 
-    // HMR for renderer base on electron-vite cli.
-    // Load the remote URL for development or the local html file for production.
-    if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-        mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
-    } else {
-        mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+        registerWindowListeners(window)
     }
 }
 
-async function performBackgroundTask() {
-    console.log('Tugas latar belakang berjalan...');
-    // // Logika tugas latar belakang di sini
-    // let data = JSON.stringify({
-    //   "data": {
-    //     "datetime": "2024-08-08 09:09:09",
-    //     "machine_no": "tes"
-    //   }
-    // });
-
-    // let config = {
-    //   method: 'GET',
-    //   url: 'https://mero.antzman.com/api/method/soap_fingerprint.v1.log_data.get_last_sync_time',
-    //   headers: { 
-    //     'Authorization': 'token 1c8cbfc7013c209:ed8ad2e8566feba', 
-    //     'Content-Type': 'application/json'
-    //   },
-    //   data : data
-    // };
-
-    // var last_sync_time = await axios.request(config).then((response) => {
-    //   console.log(JSON.stringify(response.data));
-    // }).catch((error) => {
-    //   console.log(error);
-    // });
-}
-
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.whenReady().then(() => {
-    // Set app user model id for windows
-    electronApp.setAppUserModelId('com.electron')
-    
-    // Cek apakah argumen `--task-scheduler` ada di dalam process.argv
-    const isTaskScheduler = process.argv.includes('--task-scheduler');
-
-    if (isTaskScheduler) {
-        // Jalankan tugas latar belakang
-        performBackgroundTask();
-        return
-    }
-
-    // Default open or close DevTools by F12 in development
-    // and ignore CommandOrControl + R in production.
-    // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
-    app.on('browser-window-created', (_, window) => {
-        optimizer.watchWindowShortcuts(window)
-    })
-
-    // IPC test
-    ipcMain.on('ping', () => console.log('pong'))
-    
-    createWindow()
-
-    app.on('activate', function () {
-        // On macOS it's common to re-create a window in the app when the
-        // dock icon is clicked and there are no other windows open.
-        if (BrowserWindow.getAllWindows().length === 0) createWindow()
-    })
-})
-
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
-app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit()
-    }
-})
-
+new Main()
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.

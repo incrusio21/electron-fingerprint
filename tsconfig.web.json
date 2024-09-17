@@ -5,7 +5,11 @@
     "src/renderer/src/**/*",
     "src/renderer/src/**/*.tsx",
     "src/preload/*.d.ts",
+    "src/fyo/**/*",
+    "src/models/**/*",
+    "src/schemas/**/*",
     "src/utils/**/*",
+    "fixtures/**/*",
   ],
   "compilerOptions": {
     "composite": true,
@@ -16,11 +20,23 @@
       "@renderer/*": [
         "src/renderer/src/*"
       ],
-      "@utils/*": [
-        "src/utils/src/*"
-      ],
       "@assets/*": [
         "src/renderer/assets/*"
+      ],
+      "@fyo/*": [
+        "src/fyo/*"
+      ],
+      "@models/*": [
+        "src/models/*"
+      ],
+      "@schemas/*": [
+        "src/schemas/*"
+      ],
+      "@utils/*": [
+        "src/utils/*"
+      ],
+      "@fixtures/*": [
+        "fixtures/*"
       ],
       "@/*": [
         "src/renderer/src/*"

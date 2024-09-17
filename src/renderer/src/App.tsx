@@ -1,42 +1,51 @@
-import { darkModeAtom } from '@/utils';
+import { TitleBar } from '@/components';
+import { DatabaseSelector, Desk, SetupWizard } from '@/pages';
+import { activeScreen } from '@/store';
 import { useAtom } from 'jotai';
 import { useEffect } from 'react';
-import { TitleBar } from './components';
+import { fyo } from './initFyo';
 
 function App() {
-	const [_, setIsDarkMode] = useAtom<boolean>(darkModeAtom);
-	
+	const [activeScreenVal, setActiveScreen] = useAtom(activeScreen);
+
+	const handleChange = (e: MediaQueryList | MediaQueryListEvent) => {
+		const isDark = e.matches;
+		document.documentElement.classList.toggle('dark', isDark);
+	};
+
+    
+
+    const fileSelected = async (filePath: string): Promise<void> => {
+        fyo.config.set('lastSelectedFilePath', filePath);
+    }
+
 	useEffect(() => {
 		const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-		setIsDarkMode(mediaQuery.matches);
 
-		// Fungsi untuk menerapkan mode gelap atau terang
-		const applyTheme = (isDark : boolean) => {
-			if (isDark) {
-				document.documentElement.classList.add('dark');
-			} else {
-				document.documentElement.classList.remove('dark');
-			}
-			setIsDarkMode(isDark)
-		};
-	
-		// Inisialisasi berdasarkan preferensi awal
-		applyTheme(mediaQuery.matches);
-	
-		// Tambahkan event listener untuk mendeteksi perubahan
-		const handleChange = (e) => applyTheme(e.matches);
+		// Inisialisasi dan tambahkan event listener
+		handleChange(mediaQuery);
 		mediaQuery.addEventListener('change', handleChange);
-	
-		// Cleanup event listener saat komponen unmount
+		
 		return () => mediaQuery.removeEventListener('change', handleChange);
-	  }, []);
-	  
+	}, []);
+	
+	useEffect(() => {
+		const lastSelectedFilePath = fyo.config.get('lastSelectedFilePath', null);
+		console.log(lastSelectedFilePath)
+		if (typeof lastSelectedFilePath !== 'string' || !lastSelectedFilePath.length) {
+			setActiveScreen('DatabaseSelector');
+		} 
+		// else {
+		// 	fileSelected(lastSelectedFilePath);
+		// }
+	}, [])
+
 	return (
 		<>
-			<TitleBar className="block fixed p-1 w-full text-black dark:text-white h-8" />
-			<div className="flex h-full items-center justify-center">
-				<span className="text-4xl text-blue-500" >Hello Fingerprint Log</span>
-			</div>
+			<TitleBar className="border-b flex p-1 w-full h-8" />
+			{activeScreenVal === "DatabaseSelector" && <DatabaseSelector />}
+			{activeScreenVal === "Desk" && <Desk />}
+			{activeScreenVal === "SetupWizard" && <SetupWizard />}
 		</>
 	)
 }

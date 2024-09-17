@@ -1,45 +1,129 @@
+@font-face {
+    font-family: 'Inter';
+    font-weight: 100 900;
+    font-display: swap;
+    font-style: oblique 0deg 10deg;
+    src: url('fonts/Inter.var.woff2') format('woff2');
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-    #app {
-        @apply h-full;
-    }
+#app {
+    @apply h-full;
+}
 
-    html, body {
-        @apply h-full;
+html, body {
+    @apply h-full;
 
-        @apply select-none;
+    @apply select-none;
 
-        @apply bg-transparent;
+    @apply bg-transparent;
 
-        @apply font-mono antialiased  text-white;
+    @apply overflow-hidden;
 
-        @apply overflow-hidden;
+    @apply bg-gray-50 text-black;
+}
 
-        @apply bg-white text-black;
-    }
-      
-    .dark body {
-        @apply bg-gray-900 text-white; /* Night mode */ 
-    }
-    
-    header {
-        background: #F3F3F3;
-    }
-    
-    .dark header {
-        background: #202020;
-    }
+.dark *, ::before, ::after {
+    @apply border-[#333333]
+}
 
-    .drag-region {
-        -webkit-app-region: drag;
-    }
+.dark body {
+    @apply bg-[#1e1e1e] text-[#d4d4d4] ; /* Night mode */ 
+}
 
-    .drag-region .drag-button {
-        -webkit-app-region: no-drag;
-    }
+.drag-region {
+    -webkit-app-region: drag;
+}
 
-    
+.drag-region .drag-button {
+    -webkit-app-region: no-drag;
+}
+
+:root {
+    --w-form: 600px;
+
+    /* Row Heights */
+    --h-row-smallest: 2rem;
+    --h-row-small: 2.5rem;
+    --h-row-mid: 3rem;
+    --h-row-large: 3.5rem;
+    --h-row-largest: 4rem;
+    --h-app: 800px;
+}
+
+.w-form {
+    width: var(--w-form);
+}
+
+.h-form {
+    height: 800px;
+}
+
+.h-row-smallest {
+    height: var(--h-row-smallest);
+}
+
+.h-row-small {
+    height: var(--h-row-small);
+}
+
+.h-row-mid {
+    height: var(--h-row-mid);
+}
+
+.h-row-large {
+    height: var(--h-row-large);
+}
+
+.h-row-largest {
+    height: var(--h-row-largest);
+}
+
+.bg-form {
+    @apply bg-white
+}
+
+.dark .bg-form {
+    @apply bg-[#252526] 
+}
+
+.show-mandatory::after {
+    content: '*';
+    display: inline-block;
+    width: 0px;
+    height: 0px;
+    margin-left: -0.875rem;
+    vertical-align: -3px;
+    @apply text-red-500;
+}
+
+button {
+    @apply bg-gray-200 text-gray-700 dark:bg-[#d4d4d4] dark:text-[#252526]
+}
+
+.button-primary {
+    @apply bg-blue-500 text-white dark:bg-blue-600 dark:text-[#d4d4d4]
+}
+
+.button-success {
+    @apply bg-green-500 text-white dark:bg-green-600 dark:text-[#d4d4d4]
+}
+
+.button-info {
+    @apply bg-sky-400 text-white dark:bg-sky-500
+}
+
+.button-warning {
+    @apply bg-yellow-400 text-white dark:bg-yellow-500
+}
+
+.button-danger {
+    @apply bg-red-500 text-white dark:bg-red-600 
+}
+
+.button-inverse {
+    @apply dark:bg-white dark:text-[#252526] bg-gray-800 text-white
 }
