@@ -1,6 +1,7 @@
 import { Doc } from '@fyo/models/doc';
 import { BaseError, DuplicateEntryError, LinkValidationError } from '@fyo/utils/errors';
 import { fyo } from '@renderer/initFyo';
+import { Field, FieldType, FieldTypeEnum, NumberField } from '@schemas/types';
 import clsx, { ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -29,4 +30,26 @@ export function getErrorMessage(e: Error, doc?: Doc): string {
     }
     
     return errorMessage;
+}
+
+export function isNumeric(
+        fieldtype: FieldType
+    ): fieldtype is NumberField['fieldtype'];
+    
+export function isNumeric(fieldtype: Field): fieldtype is NumberField;
+
+export function isNumeric(
+        fieldtype: Field | FieldType
+    ): fieldtype is NumberField | NumberField['fieldtype'] {
+    if (typeof fieldtype !== 'string') {
+        fieldtype = fieldtype?.fieldtype;
+    }
+
+    const numericTypes: FieldType[] = [
+        FieldTypeEnum.Int,
+        FieldTypeEnum.Float,
+        FieldTypeEnum.Currency,
+    ];
+
+    return numericTypes.includes(fieldtype);
 }
