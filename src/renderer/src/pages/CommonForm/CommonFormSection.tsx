@@ -50,11 +50,10 @@ const SectionControl = ({ fields, doc, onValueChange, errors }: SectionControlPr
                 <div key={field.fieldname} className={twMerge(field.fieldtype === "AttachImage" && 'row-span-2', field.fieldtype === 'Check' ? 'mt-auto' : 'mb-auto')}>
                     {field.fieldtype !== 'Table' && 
                     <FormControl 
-                        showLabel={true} df={field} value={doc[field.fieldname] || ""} 
+                        showLabel={true} df={field} value={doc[field.fieldname] || ""} doc={doc}
                         change={(value) => onValueChange(field, value)} 
                     />}
-                    {errors?.[field.fieldname] && 
-                    <div className="text-sm text-red-600 mt-1">
+                    {errors?.[field.fieldname] && <div className="text-sm text-red-600 mt-1">
                        {errors[field.fieldname]}
                     </div>}
                 </div>

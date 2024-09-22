@@ -1,4 +1,5 @@
 import { DocValue } from "@fyo/core/types";
+import { Doc } from "@fyo/models/doc";
 import { Field } from "@schemas/types";
 import { useRef } from "react";
 import { Data } from "./Data";
@@ -9,6 +10,7 @@ const components: Record<string, React.ElementType> = {
 
 interface FormControlProps {
     df: Field; 
+    doc: Doc;
     value?: string | number | boolean | object;
     showLabel?: boolean; 
     required?: boolean | null;
@@ -41,8 +43,6 @@ export const FormControl = ({ ...props } : FormControlProps) => {
     const Component = components[fieldtype] || Data;
     
     return (
-        <>
             <Component {...props} ref={controlRef} />
-        </>
     );
 }

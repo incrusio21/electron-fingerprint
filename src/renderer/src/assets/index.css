@@ -44,7 +44,8 @@ html, body {
 
 :root {
     --w-form: 600px;
-
+    --w-scrollbar: 0.6rem;
+    
     /* Row Heights */
     --h-row-smallest: 2rem;
     --h-row-small: 2.5rem;
@@ -126,4 +127,36 @@ button {
 
 .button-inverse {
     @apply dark:bg-white dark:text-[#252526] bg-gray-800 text-white
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 150ms ease-out;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+
+/* Custom Scroll */
+.custom-scroll::-webkit-scrollbar {
+    width: var(--w-scrollbar);
+    height: var(--w-scrollbar);
+}
+
+.custom-scroll::-webkit-scrollbar-track:vertical {
+    border-left: solid 1px theme('colors.gray.100');
+}
+
+.custom-scroll::-webkit-scrollbar-track:horizontal {
+    border-top: solid 1px theme('colors.gray.100');
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+    background: theme('colors.gray.100');
+}
+
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+    background: theme('colors.gray.200');
 }

@@ -65,7 +65,7 @@ export const SetupWizard = ({ children } : Props) => {
     }, [fyo])
     
     return (
-        <FormContainer className="justify-content items-center h-full">
+        <FormContainer showHeader={false} className="justify-content items-center h-full">
             <FormHeader formTitle="Set up your site setting" className="sticky top-0 bg-white dark:bg-[#252526] border-b dark:border-[#333333]" />
             {/* Section Container */}
             {docOrNull && (
