@@ -46,7 +46,7 @@ const SectionTitle = ({ title, collapsible, collapsed, toggleCollapsed } : Colla
 
 const SectionControl = ({ fields, errors, onValueChange }: SectionControlProps) => {
     const doc = useAtomValue(docAtom) 
-
+    
     return (
         <div className="grid gap-4 gap-x-8 grid-cols-2">
             {fields.map((field, _) => (
@@ -58,7 +58,7 @@ const SectionControl = ({ fields, errors, onValueChange }: SectionControlProps) 
                     }}>
                         <FormControl 
                             fieldtype={field?.fieldtype}
-                            showLabel={true} value={doc![field.fieldname] || ""}
+                            showLabel={true} value={doc![field.fieldname] ?? ""}
                         />
                     </ScopeProvider>}
                     {errors?.[field.fieldname] && <div className="text-sm text-red-600 mt-1">

@@ -2,10 +2,12 @@ import { FieldType } from "@schemas/types";
 import { useRef } from "react";
 import { AutoComplete } from "./AutoComplete";
 import { Data } from "./Data";
+import { Float } from "./Float";
 
 const components: Record<string, React.ElementType> = {
+    AutoComplete,
     Data,
-    AutoComplete
+    Float
 };
 
 interface FormControlProps {

@@ -1,8 +1,10 @@
+import { Converter } from "@fyo/core/converter";
 import { DocValue, DocValueMap } from "@fyo/core/types";
 import { Fyo } from "@fyo/index";
 import Observable from "@fyo/utils/observable";
-import { Field, FieldTypeEnum, Schema } from "@schemas/types";
+import { Field, FieldTypeEnum, RawValue, Schema } from "@schemas/types";
 import { getIsNullOrUndef, getMapFromList } from "@utils/index";
+import { getPreDefaultValues } from "./helpers";
 import { EmptyMessageMap, ListsMap, RequiredMap, ValidationMap } from "./types";
 import { validateOptions, validateRequired } from "./validationFunction";
 
@@ -33,7 +35,9 @@ export class Doc extends Observable<DocValue | Doc[]> {
         this.schema = schema;
         this.fieldMap = getMapFromList(schema.fields, 'fieldname');
         
+        this._setDefaults();
         this._setValuesWithoutChecks(data, convertToDocValue);
+        
         return this as Doc;
     }
 
@@ -61,7 +65,8 @@ export class Doc extends Observable<DocValue | Doc[]> {
         for (const field of this.schema.fields) {
             const { fieldname, fieldtype } = field;
             const value = data[field.fieldname];
-      
+
+
             if (Array.isArray(value)) {
                 // for (const row of value) {
                 //     this.push(fieldname, row, convertToDocValue);
@@ -74,11 +79,11 @@ export class Doc extends Observable<DocValue | Doc[]> {
             } else if (value !== undefined && !convertToDocValue) {
                 this[fieldname] = value;
             } else if (value !== undefined) {
-                // this[fieldname] = Converter.toDocValue(
-                //     value as RawValue,
-                //     field,
-                //     this.fyo
-                // );
+                this[fieldname] = Converter.toDocValue(
+                    value as RawValue,
+                    field,
+                    this.fyo
+                );
             } else {
                 this[fieldname] = this[fieldname] ?? null;
             }
@@ -93,6 +98,17 @@ export class Doc extends Observable<DocValue | Doc[]> {
         this._dirty = value;
         if (this.schema.isChild && this.parentdoc) {
             this.parentdoc._dirty = value;
+        }
+    }
+
+    _setDefaults() {
+        for (const field of this.schema.fields) {
+            let defaultValue: DocValue | Doc[] = getPreDefaultValues(
+                field.fieldtype,
+                this.fyo
+            );
+            
+            this[field.fieldname] = defaultValue;
         }
     }
 
