@@ -5,18 +5,21 @@ import { getFieldsGroupedByTabAndSection } from "@/utils/ui";
 import { DocValue } from "@fyo/core/types";
 import { Doc } from "@fyo/models/doc";
 import { fyo } from "@renderer/initFyo";
+import { docAtom } from "@renderer/store";
 import { getErrorMessage } from "@renderer/utils";
 import { Field } from "@schemas/types";
+import { useAtom } from "jotai";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { CommonFormSection } from ".";
 
 type Props = { children?: React.ReactNode }
 export const SetupWizard = ({ children } : Props) => {
-    const [docOrNull, setDocOrNull] = useState<Doc | null>(null);
-    const [errors, setErrors] = useState<Record<string, string>>({});
+    const [docOrNull, setDocOrNull] = useAtom(docAtom);
     const { showDBSelector } = useActiveScreen()
-    
+
+    const [errors, setErrors] = useState<Record<string, string>>({});
+
     // Derived state
     const hasDoc : boolean = useMemo(() => docOrNull instanceof Doc, [docOrNull]);
     
@@ -64,6 +67,9 @@ export const SetupWizard = ({ children } : Props) => {
         fetchDoc();
     }, [fyo])
     
+    // Set the function to the atom
+    
+
     return (
         <FormContainer showHeader={false} className="justify-content items-center h-full">
             <FormHeader formTitle="Set up your site setting" className="sticky top-0 bg-white dark:bg-[#252526] border-b dark:border-[#333333]" />
@@ -74,19 +80,17 @@ export const SetupWizard = ({ children } : Props) => {
                     <CommonFormSection 
                         key={name + idx}
                         title={name}
-                        doc={docOrNull}
                         fields={fields}
                         className={twMerge("p-4", idx !== 0 && 'border-t')}
                         showTitle={name !== 'Default'}
-                        collapsible={true}
                         onValueChange={handleValueChange}
+                        collapsible={true}
                         errors={errors}
                     />
                 ))}
             </div>)}
-            {children}
             {/* Buttons Bar */}
-            <div className="
+            <div className={twMerge(`
                 mt-auto
                 p-4
                 flex
@@ -97,7 +101,7 @@ export const SetupWizard = ({ children } : Props) => {
                 sticky
                 bottom-0
                 dark:bg-[#252526]
-                ">
+                `)}>
                     <Button className="w-24" onClick={setupCancelled}>Cancel</Button>
                     <Button tipe="primary" className="w-24" disabled onClick={setupCancelled}>Submit</Button>
             </div>

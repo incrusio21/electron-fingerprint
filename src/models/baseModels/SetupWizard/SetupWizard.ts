@@ -2,6 +2,19 @@ import { Doc } from "@fyo/models/doc";
 import { ListsMap } from "@fyo/models/types";
 import { getCountryInfo } from "@utils/misc";
 
+function getCurrencyList(): { countryCode: string; name: string }[] {
+	const result: { countryCode: string; name: string }[] = [];
+	const countryInfo = getCountryInfo();
+	for (const info of Object.values(countryInfo)) {
+		const { currency, code } = info ?? {};
+		if (typeof currency !== 'string' || typeof code !== 'string') {
+			continue;
+		}
+
+		result.push({ name: currency, countryCode: code });
+	}
+	return result;
+}
 export class SetupWizard extends Doc {
     fiscalYearEnd?: Date;
     fiscalYearStart?: Date;
@@ -106,8 +119,8 @@ export class SetupWizard extends Doc {
     // };
   
     static lists: ListsMap = {
-      country: () => Object.keys(getCountryInfo()),
-    //   currency: () => getCurrencyList().map(({ name }) => name),
+		country: () => Object.keys(getCountryInfo()),
+		currency: () => getCurrencyList().map(({ name }) => name),
     //   chartOfAccounts: () => getCOAList().map(({ name }) => name),
     };
 }
