@@ -1,23 +1,20 @@
-import { DocValue } from "@fyo/core/types";
-import { Doc } from "@fyo/models/doc";
-import { Field } from "@schemas/types";
+import { FieldType } from "@schemas/types";
 import { useRef } from "react";
+import { AutoComplete } from "./AutoComplete";
 import { Data } from "./Data";
 
 const components: Record<string, React.ElementType> = {
-    Data
+    Data,
+    AutoComplete
 };
 
 interface FormControlProps {
-    df: Field; 
-    doc: Doc;
     value?: string | number | boolean | object;
-    showLabel?: boolean; 
-    required?: boolean | null;
-    change: (value: DocValue) => Promise<void>
+    showLabel?: boolean;
+    fieldtype: FieldType
 }
 
-export const FormControl = ({ ...props } : FormControlProps) => {
+export const FormControl = ({ fieldtype, ...props } : FormControlProps) => {
     const controlRef = useRef<any>(null);
     
     const clear = () => {
@@ -39,10 +36,9 @@ export const FormControl = ({ ...props } : FormControlProps) => {
         return controlRef.current;
     };
 
-    const fieldtype = props.df?.fieldtype;
     const Component = components[fieldtype] || Data;
-    
+
     return (
-            <Component {...props} ref={controlRef} />
+        <Component {...props} ref={controlRef} />
     );
 }

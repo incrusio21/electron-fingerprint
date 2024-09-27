@@ -32,6 +32,40 @@ export function getErrorMessage(e: Error, doc?: Doc): string {
     return errorMessage;
 }
 
+export function fuzzyMatch(input: string, target: string) {
+    const keywordLetters = [...input];
+    const candidateLetters = [...target];
+    
+    let keywordLetter = keywordLetters.shift();
+    let candidateLetter = candidateLetters.shift();
+
+    let isMatch = true;
+    let distance = 0;
+  
+    while (keywordLetter && candidateLetter) {
+        
+        if (keywordLetter === candidateLetter) {
+            keywordLetter = keywordLetters.shift();
+        } else if (keywordLetter.toLowerCase() === candidateLetter.toLowerCase()) {
+            keywordLetter = keywordLetters.shift();
+            distance += 0.5;
+        } else {
+            distance += 1;
+        }
+    
+        candidateLetter = candidateLetters.shift();
+    }
+    
+    if (keywordLetter !== undefined) {
+        distance = Number.MAX_SAFE_INTEGER;
+        isMatch = false;
+    } else {
+        distance += candidateLetters.length;
+    }
+  
+    return { isMatch, distance };
+}
+
 export function isNumeric(
         fieldtype: FieldType
     ): fieldtype is NumberField['fieldtype'];

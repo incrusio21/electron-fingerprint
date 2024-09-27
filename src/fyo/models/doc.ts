@@ -3,7 +3,7 @@ import { Fyo } from "@fyo/index";
 import Observable from "@fyo/utils/observable";
 import { Field, FieldTypeEnum, Schema } from "@schemas/types";
 import { getIsNullOrUndef, getMapFromList } from "@utils/index";
-import { ListsMap, RequiredMap, ValidationMap } from "./types";
+import { EmptyMessageMap, ListsMap, RequiredMap, ValidationMap } from "./types";
 import { validateOptions, validateRequired } from "./validationFunction";
 
 export class Doc extends Observable<DocValue | Doc[]> {
@@ -125,7 +125,6 @@ export class Doc extends Observable<DocValue | Doc[]> {
             this[fieldname] = value;
         }
 
-
         // always run applyChange from the parentdoc
         if (this.schema.isChild && this.parentdoc) {
             // await this._applyChange(fieldname);
@@ -195,4 +194,5 @@ export class Doc extends Observable<DocValue | Doc[]> {
     required: RequiredMap = {};
     
     static lists: ListsMap = {};
+    static emptyMessages: EmptyMessageMap = {};
 }

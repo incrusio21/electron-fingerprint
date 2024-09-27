@@ -1,7 +1,9 @@
+import { FormControl, Icon } from "@/components";
+import { docAtom, initialDfScope } from "@/store";
 import { DocValue } from "@fyo/core/types";
-import { Doc } from "@fyo/models/doc";
-import { FormControl, Icon } from "@renderer/components";
 import { Field } from "@schemas/types";
+import { ScopeProvider } from "bunshi/react";
+import { useAtomValue } from "jotai";
 import { ComponentProps, MouseEventHandler, useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa6";
 import { twMerge } from "tailwind-merge";
@@ -19,7 +21,6 @@ type CollapsedProps = {
 
 type SectionControlProps = {
     fields: Field[];
-    doc: Doc
     onValueChange: (field: Field, value: DocValue) => Promise<void>
     errors: Record<string, string>
 }
@@ -43,16 +44,23 @@ const SectionTitle = ({ title, collapsible, collapsed, toggleCollapsed } : Colla
     )
 }
 
-const SectionControl = ({ fields, doc, onValueChange, errors }: SectionControlProps) => {
+const SectionControl = ({ fields, errors, onValueChange }: SectionControlProps) => {
+    const doc = useAtomValue(docAtom) 
+
     return (
         <div className="grid gap-4 gap-x-8 grid-cols-2">
             {fields.map((field, _) => (
                 <div key={field.fieldname} className={twMerge(field.fieldtype === "AttachImage" && 'row-span-2', field.fieldtype === 'Check' ? 'mt-auto' : 'mb-auto')}>
                     {field.fieldtype !== 'Table' && 
-                    <FormControl 
-                        showLabel={true} df={field} value={doc[field.fieldname] || ""} doc={doc}
-                        change={(value) => onValueChange(field, value)} 
-                    />}
+                    <ScopeProvider scope={initialDfScope} value={{
+                        ...field, 
+                        change: (value) => onValueChange(field, value)
+                    }}>
+                        <FormControl 
+                            fieldtype={field?.fieldtype}
+                            showLabel={true} value={doc![field.fieldname] || ""}
+                        />
+                    </ScopeProvider>}
                     {errors?.[field.fieldname] && <div className="text-sm text-red-600 mt-1">
                        {errors[field.fieldname]}
                     </div>}
@@ -62,7 +70,7 @@ const SectionControl = ({ fields, doc, onValueChange, errors }: SectionControlPr
     )
 }
 
-export const CommonFormSection = ({ className, fields, showTitle, title, collapsible, doc, onValueChange, errors, ...props }: Props ) => {
+export const CommonFormSection = ({ className, fields, showTitle, title, collapsible, errors, onValueChange, ...props }: Props ) => {
     const [collapsed, setCollapsed] = useState(false);
 
     const toggleCollapsed = () => {
@@ -82,10 +90,9 @@ export const CommonFormSection = ({ className, fields, showTitle, title, collaps
             />}
             {!collapsed && 
             <SectionControl
-                doc={doc}
                 fields={fields}
-                onValueChange={onValueChange}
                 errors={errors}
+                onValueChange={onValueChange}
             />}
         </>)}
         </div>

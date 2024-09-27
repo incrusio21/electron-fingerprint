@@ -1,33 +1,17 @@
-import { DocValue } from "@fyo/core/types";
-import { Doc } from "@fyo/models/doc";
-import { isNumeric } from "@renderer/utils";
-import { evaluateReadOnly, evaluateRequired } from "@renderer/utils/doc";
-import { Field } from "@schemas/types";
+import { useContolValue, useDfValue } from "@/hooks/useControl";
+import { initialControlScope } from "@/store";
+import { isNumeric } from "@/utils";
+import { evaluateReadOnly, evaluateRequired } from "@/utils/doc";
 import { getIsNullOrUndef } from "@utils/index";
+import { ScopeProvider } from 'bunshi/react';
 import { forwardRef, useMemo } from "react";
 import { twMerge } from "tailwind-merge";
 
-export interface withBaseProps {
-    df: Field;
-    doc: Doc;
+export interface BaseProps {
     value?: string | number | boolean | object;
     inputType: string
-    showLabel?: boolean; 
-    required?: boolean | null;
-    readOnly?: boolean | null;
-    change?: (value: DocValue) => Promise<void>
+    showLabel?: boolean;
 }
-
-export type BaseProps = {
-    isReadOnly: boolean;
-    isRequired: boolean;
-    showMandatory: boolean;
-    inputPlaceholder: string;
-    triggerChange: (value: any) => void
-    inputClasses?: string[];
-    containerClasses?: string[];
-    labelClasess?: string;
-} & withBaseProps
 
 export const withBase = (WrappedComponent : React.ComponentType<BaseProps & React.RefAttributes<HTMLInputElement>>) => {
     const baseInputClasses = "text-base focus:outline-none w-full placeholder-gray-500"
@@ -35,12 +19,15 @@ export const withBase = (WrappedComponent : React.ComponentType<BaseProps & Reac
     const baseContainerClasses = "rounded"
     const labelClasess = "text-gray-600 dark:text-inherit text-sm mb-1"
 
-    const BaseComponent = forwardRef<HTMLInputElement, withBaseProps>(
-        ({ df, value, readOnly, required, change, ...props }, ref) => {
-        const isReadOnly : boolean = useMemo(() => typeof readOnly === 'boolean' ? readOnly : evaluateReadOnly(df), [readOnly, df]);
-        const isRequired : boolean = useMemo(() => typeof required === 'boolean' ? required : evaluateRequired(df), [required, df]);
+    const BaseComponent = forwardRef<HTMLInputElement, BaseProps>(
+        ({ value, showLabel, ...props }, ref) => {
+        const df = useDfValue()
+        const { readOnly, required, placeholder, label, change } = df
+
+        const isReadOnly : boolean = useMemo(() => typeof readOnly === 'boolean' ? readOnly : evaluateReadOnly(df), [readOnly]);
+        const isRequired : boolean = useMemo(() => typeof required === 'boolean' ? required : evaluateRequired(df), [required]);
         const showMandatory : boolean = useMemo(() => isEmpty() && isRequired, [isRequired]);
-        const inputPlaceholder : string = useMemo(() => df.placeholder || df.label, [df]);
+        const inputPlaceholder : string = useMemo(() => placeholder || label, [placeholder, label]);
 
         function isEmpty() {
             if (Array.isArray(value) && !value.length) return true;
@@ -94,17 +81,15 @@ export const withBase = (WrappedComponent : React.ComponentType<BaseProps & Reac
         }
 
         return (
-            <WrappedComponent 
-                df={df} 
-                value={value}
-                isReadOnly={isReadOnly}
-                isRequired={isRequired}
-                showMandatory={showMandatory} 
-                inputPlaceholder={inputPlaceholder}
-                inputClasses={inputClasses} containerClasses={containerClasses} 
-                labelClasess={labelClasess}
-                triggerChange={triggerChange}
-                {...props} ref={ref} />
+            <ScopeProvider scope={initialControlScope} value={{
+                isReadOnly, isRequired, showLabel, showMandatory, 
+                inputClasses, containerClasses, labelClasess, inputPlaceholder,
+                triggerChange
+            }}>
+                <WrappedComponent 
+                    value={value}
+                    {...props} ref={ref} />
+            </ScopeProvider>
         )
     });
 
@@ -112,9 +97,15 @@ export const withBase = (WrappedComponent : React.ComponentType<BaseProps & Reac
 };
 
 export const Base = forwardRef<HTMLInputElement, BaseProps>(
-    ({ df, value, inputType, showLabel, showMandatory, isReadOnly, inputPlaceholder, triggerChange, 
-        inputClasses, containerClasses, labelClasess }, ref) => {
+    ({ value, inputType }, ref) => {
+    const df = useDfValue()
+    const {
+        isReadOnly, showLabel, showMandatory, 
+        inputClasses, containerClasses, labelClasess,
+        inputPlaceholder, triggerChange
+    } = useContolValue()
     
+
     function onBlur(e: React.FocusEvent<HTMLInputElement>) {
         const target = e.target;
         if (!isReadOnly && triggerChange) {
@@ -123,7 +114,7 @@ export const Base = forwardRef<HTMLInputElement, BaseProps>(
     }
 
     function parseInput(e : React.FormEvent<HTMLInputElement>) {
-        console.log(e)
+        // console.log(e)
         // return !isReadOnly && onInput && onInput(e)
     }
     

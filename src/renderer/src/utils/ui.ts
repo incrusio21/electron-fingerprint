@@ -63,3 +63,13 @@ export function getFieldsGroupedByTabAndSection(
 
   	return grouped
 }
+
+// Safely handle ref type (MutableRefObject or callback ref)
+export const handleRef = (ref: React.Ref<HTMLInputElement>) => {
+	if (typeof ref === 'function') {
+		return null; // Handle callback refs if needed
+	} else if (ref && 'current' in ref) {
+		return ref.current;
+	}
+	return null;
+};

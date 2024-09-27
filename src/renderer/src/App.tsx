@@ -13,8 +13,6 @@ function App() {
 		document.documentElement.classList.toggle('dark', isDark);
 	};
 
-    
-
     const fileSelected = async (filePath: string): Promise<void> => {
         fyo.config.set('lastSelectedFilePath', filePath);
     }
@@ -31,10 +29,10 @@ function App() {
 	
 	useEffect(() => {
 		const lastSelectedFilePath = fyo.config.get('lastSelectedFilePath', null);
-		console.log(lastSelectedFilePath)
 		if (typeof lastSelectedFilePath !== 'string' || !lastSelectedFilePath.length) {
 			setActiveScreen('DatabaseSelector');
 		} 
+		
 		// else {
 		// 	fileSelected(lastSelectedFilePath);
 		// }

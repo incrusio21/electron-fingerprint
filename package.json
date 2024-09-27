@@ -23,8 +23,10 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^3.0.0",
+    "@popperjs/core": "^2.11.8",
     "axios": "^1.7.6",
     "better-sqlite3": "^11.2.1",
+    "bunshi": "^2.1.5",
     "electron-store": "^8.2.0",
     "electron-updater": "^6.1.7",
     "jotai": "^2.9.3",
@@ -32,6 +34,8 @@
     "lodash": "^4.17.21",
     "node-windows": "^1.0.0-beta.8",
     "pesa": "^1.1.13",
+    "react-popper": "^2.3.0",
+    "react-transition-group": "^4.4.5",
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
