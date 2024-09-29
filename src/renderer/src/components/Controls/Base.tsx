@@ -11,6 +11,7 @@ export interface BaseProps {
     value?: string | number | boolean | object;
     inputType: string
     showLabel?: boolean;
+    parse?: (value: any) => any;
 }
 
 export const withBase = (WrappedComponent : React.ComponentType<BaseProps & React.RefAttributes<HTMLInputElement>>) => {
@@ -70,21 +71,10 @@ export const withBase = (WrappedComponent : React.ComponentType<BaseProps & Reac
             return classes
         }, [])
 
-        function triggerChange(value: any) {
-            value = parseValue(value);
-            if (value === '') value = null;
-            if (change) change(value);
-        }
-
-        function parseValue(value: any) {
-            return value; // Implement any parsing logic if necessary
-        }
-
         return (
             <ScopeProvider scope={initialControlScope} value={{
                 isReadOnly, isRequired, showLabel, showMandatory, 
-                inputClasses, containerClasses, labelClasess, inputPlaceholder,
-                triggerChange
+                inputClasses, containerClasses, labelClasess, inputPlaceholder
             }}>
                 <WrappedComponent 
                     value={value}
@@ -97,14 +87,24 @@ export const withBase = (WrappedComponent : React.ComponentType<BaseProps & Reac
 };
 
 export const Base = forwardRef<HTMLInputElement, BaseProps>(
-    ({ value, inputType }, ref) => {
+    ({ value, inputType, parse }, ref) => {
     const df = useDfValue()
+    const { change } = df 
     const {
         isReadOnly, showLabel, showMandatory, 
         inputClasses, containerClasses, labelClasess,
-        inputPlaceholder, triggerChange
+        inputPlaceholder
     } = useContolValue()
     
+    const triggerChange = (value: any) => {
+        value = parseValue(value);
+        if (value === '') value = null;
+        if (change) change(value);
+    }
+
+    const parseValue = (value: any) => {
+        return parse ? parse(value) : value; // Implement any parsing logic if necessary
+    }
 
     function onBlur(e: React.FocusEvent<HTMLInputElement>) {
         const target = e.target;

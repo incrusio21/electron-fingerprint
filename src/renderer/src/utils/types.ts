@@ -29,7 +29,6 @@ export type Control = {
     containerClasses?: string[];
     labelClasess?: string;
     inputPlaceholder: string;
-    triggerChange: (value: any) => void
 }
 
 export type Input = {

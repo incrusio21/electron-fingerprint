@@ -15,7 +15,7 @@ const AutoCompleteBase = forwardRef<HTMLInputElement, BaseProps>(
     ({ inputType = "text", value }, ref) => {
         const doc = useAtomValue(docAtom)
         const df = useDfValue()
-        const { triggerChange } = useContolValue()
+        const { change } = df
         
         const [isLoading, setIsLoading] = useState(false);
         const [suggestions, setSuggestions] = useState<DropdownItem[]>([]);
@@ -25,7 +25,17 @@ const AutoCompleteBase = forwardRef<HTMLInputElement, BaseProps>(
       
             return getOptionList(df, doc);
         }, [])
-    
+        
+        const triggerChange = (value: any) => {
+            value = parseValue(value);
+            if (value === '') value = null;
+            if (change) change(value);
+        }
+
+        const parseValue = (value: any) => {
+            return value; // Implement any parsing logic if necessary
+        }
+
         const updateSuggestions = async (keyword?: string ) => {
             if (typeof keyword === 'string') {
             //     this.setLinkValue(keyword, true);
@@ -97,7 +107,7 @@ const AutoCompleteBase = forwardRef<HTMLInputElement, BaseProps>(
         const onInput = (target: EventTarget & HTMLInputElement) => {
             updateSuggestions(target.value)
         }
-
+        
         return (
             <ScopeProvider scope={initialInpuScope} value={{
                 inputType, value, onInput, onFocus, onBlur

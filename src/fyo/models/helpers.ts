@@ -11,9 +11,9 @@ export function getPreDefaultValues(
         case FieldTypeEnum.Table:
             return [] as Doc[];
         case FieldTypeEnum.Currency:
-            // return fyo.pesa(0.0);
+            // return fyo.pesa(0.0)
         case FieldTypeEnum.Int:
-        case FieldTypeEnum.Float:
+        case  FieldTypeEnum.Float:
             return 0;
         default:
             return null;
