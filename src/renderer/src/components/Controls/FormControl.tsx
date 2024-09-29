@@ -3,11 +3,13 @@ import { useRef } from "react";
 import { AutoComplete } from "./AutoComplete";
 import { Data } from "./Data";
 import { Float } from "./Float";
+import { Int } from "./Int";
 
 const components: Record<string, React.ElementType> = {
     AutoComplete,
     Data,
-    Float
+    Float,
+    Int,
 };
 
 interface FormControlProps {
