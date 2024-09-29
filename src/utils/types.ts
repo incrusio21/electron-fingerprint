@@ -17,6 +17,19 @@ export interface CountryInfo {
     locale: string;
 }
 
+export interface SelectFileOptions {
+    title: string;
+    filters?: { name: string; extensions: string[] }[];
+}
+
+export interface SelectFileReturn {
+    name: string;
+    filePath: string;
+    success: boolean;
+    data: Buffer;
+    canceled: boolean;
+}
+
 export interface ConfigFilesWithModified extends ConfigFile {
     modified: string;
 }

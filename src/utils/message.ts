@@ -8,6 +8,7 @@ export enum IPC_ACTIONS {
     CHECK_DB_ACCESS = 'check-db-access',
     GET_DB_DEFAULT_PATH = 'get-db-default-path',
     GET_DB_LIST = 'get-db-list',
+    SELECT_FILE = 'select-file',
 }
 
 // events

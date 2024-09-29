@@ -23,3 +23,16 @@ export function getSetupWizardDoc(languageMap?: LanguageMap) {
         SetupWizard
     );
 }
+
+export async function getDataURL(type: string, data: Uint8Array) {
+    const blob = new Blob([data], { type });
+  
+    return new Promise<string>((resolve) => {
+        const fr = new FileReader();
+        fr.addEventListener('loadend', () => {
+            resolve(fr.result as string);
+        });
+    
+        fr.readAsDataURL(blob);
+    });
+}

@@ -1,11 +1,13 @@
 import { FieldType } from "@schemas/types";
 import { useRef } from "react";
+import { AttachImage } from "./AttachImage";
 import { AutoComplete } from "./AutoComplete";
 import { Data } from "./Data";
 import { Float } from "./Float";
 import { Int } from "./Int";
 
 const components: Record<string, React.ElementType> = {
+    AttachImage,
     AutoComplete,
     Data,
     Float,
@@ -16,6 +18,7 @@ interface FormControlProps {
     value?: string | number | boolean | object;
     showLabel?: boolean;
     fieldtype: FieldType
+    size: string | undefined
 }
 
 export const FormControl = ({ fieldtype, ...props } : FormControlProps) => {
