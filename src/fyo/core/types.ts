@@ -28,7 +28,7 @@ export type DatabaseDemuxConstructor = new (
 ) => {}
 
 export type Contex = {
-    get: <K extends keyof ConfigMap>(key: K) => ConfigMap,
+    get: <K extends keyof ConfigMap>(key: K) => ConfigMap[K],
     set: <K extends keyof ConfigMap>(key: K, value: ConfigMap[K]) => void,
     delete: (key: keyof ConfigMap) => void
 }

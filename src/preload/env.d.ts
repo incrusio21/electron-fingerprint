@@ -1,16 +1,9 @@
-import { Contex } from '@fyo/core/types';
+import { IPC } from './context';
 
 export declare global {
+  const context: IPC
+
   interface Window {
-    context: {
-      isNotMac: boolean
-      minimizeWindow: () => void;
-      maximizeWindow: () => void;
-      closeWindow: () => void;
-      getOpenFilePath: (options: OpenDialogOptions) => OpenDialogReturnValue;
-      onWindowMaximized: (callback: (event: Electron.IpcRendererEvent, maximized: boolean) => void) => void;
-      checkDbAccess: (filePath: string) => boolean;
-      store: Contex
-    }
+    context: IPC 
   }
 }

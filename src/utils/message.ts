@@ -1,8 +1,5 @@
 // ipcRenderer.send(...)
 export enum IPC_MESSAGES {
-    MINIMIZE_WINDOW = 'minimize-window',
-    MAXIMIZE_WINDOW = 'maximize-window',
-    CLOSE_WINDOW = 'close-window',
     UPDATE_TITLEBAR = 'update-titlebar',
 }
 // ipcRenderer.invoke(...)

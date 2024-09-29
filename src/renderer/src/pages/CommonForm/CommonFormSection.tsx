@@ -59,6 +59,7 @@ const SectionControl = ({ fields, errors, onValueChange }: SectionControlProps) 
                         <FormControl 
                             fieldtype={field?.fieldtype}
                             showLabel={true} value={doc![field.fieldname] ?? ""}
+                            size={field.fieldtype === 'AttachImage' ? 'form' : undefined}
                         />
                     </ScopeProvider>}
                     {errors?.[field.fieldname] && <div className="text-sm text-red-600 mt-1">

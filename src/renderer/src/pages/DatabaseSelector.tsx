@@ -41,7 +41,7 @@ export const DatabaseSelector = ({ className, ...props }: ComponentProps<'div'>)
                 <div className="px-4 h-row-largest flex flex-row items-center gap-4 p-2 hover:bg-gray-50 hover:dark:bg-gray-800 cursor-pointer" 
                     onClick={newDatabase}>
                     <div className="w-8 h-8 rounded-full bg-blue-400 relative flex-center">
-                        <FaPlus className="mx-auto mt-[18%] text-white w-5 h-5" />
+                        <FaPlus className="mx-auto text-white w-5 h-5" />
                     </div>
                     <div>
                         <p className="font-medium">New Connected Site</p>
@@ -55,7 +55,7 @@ export const DatabaseSelector = ({ className, ...props }: ComponentProps<'div'>)
                 <div className="px-4 h-row-largest flex flex-row items-center gap-4 p-2 hover:bg-gray-50 hover:dark:bg-gray-800 cursor-pointer"
                     onClick={existingDatabase}>
                     <div className="w-8 h-8 rounded-full bg-green-500 relative flex-center ">
-                        <FaUpload className="mx-auto mt-[18%] text-white w-5 h-5" />
+                        <FaUpload className="mx-auto text-white w-5 h-5" />
                     </div>
                     <div>
                         <p className="font-medium">Existing Company</p>

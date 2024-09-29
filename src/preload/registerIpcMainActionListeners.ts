@@ -1,6 +1,7 @@
 import { getConfigFilesWithModified, setAndGetCleanedConfigFiles } from "@main/helpers";
 import { Main } from "@main/index";
 import { IPC_ACTIONS } from "@utils/message";
+import { SelectFileOptions, SelectFileReturn } from "@utils/types";
 import { app, dialog, ipcMain, OpenDialogOptions } from "electron";
 import { constants } from 'fs';
 import fs from 'fs-extra';
@@ -50,4 +51,37 @@ export default function registerIpcMainActionListeners(main: Main) {
         const files = await setAndGetCleanedConfigFiles();
         return await getConfigFilesWithModified(files);
     })
+
+    ipcMain.handle(
+        IPC_ACTIONS.SELECT_FILE,
+        async (_, options: SelectFileOptions): Promise<SelectFileReturn> => {
+            const response: SelectFileReturn = {
+                name: '',
+                filePath: '',
+                success: false,
+                data: Buffer.from('', 'utf-8'),
+                canceled: false,
+            };
+            const { filePaths, canceled } = await dialog.showOpenDialog(
+                main.mainWindow!,
+                { ...options, properties: ['openFile'] }
+            );
+    
+            response.filePath = filePaths?.[0];
+            response.canceled = canceled;
+        
+            if (!response.filePath) {
+                return response;
+            }
+        
+            response.success = true;
+            if (canceled) {
+                return response;
+            }
+        
+            response.name = path.basename(response.filePath);
+            response.data = await fs.readFile(response.filePath);
+            return response;
+        }
+    );
 }

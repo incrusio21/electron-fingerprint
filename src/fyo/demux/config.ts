@@ -6,7 +6,7 @@ export class Config {
     constructor(isElectron: boolean) {
         this.config = new Map();
         if (isElectron) {
-            this.config = window.context.store;
+            this.config = context.store;
         }
     }
 

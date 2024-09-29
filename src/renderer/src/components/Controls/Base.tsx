@@ -11,6 +11,7 @@ export interface BaseProps {
     value?: string | number | boolean | object;
     inputType: string
     showLabel?: boolean;
+    size: string | undefined
     parse?: (value: any) => any;
 }
 
@@ -113,7 +114,7 @@ export const Base = forwardRef<HTMLInputElement, BaseProps>(
         }
     }
 
-    function parseInput(e : React.FormEvent<HTMLInputElement>) {
+    function parseInput(_ : React.FormEvent<HTMLInputElement>) {
         // console.log(e)
         // return !isReadOnly && onInput && onInput(e)
     }
